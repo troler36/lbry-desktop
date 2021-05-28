@@ -1,11 +1,13 @@
 // @flow
 
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import LoadingScreen from 'component/common/loading-screen';
 import MarkdownPreview from 'component/common/markdown-preview';
-import CodeViewer from 'component/viewers/codeViewer';
 import * as RENDER_MODES from 'constants/file_render_modes';
 import * as https from 'https';
+
+// $FlowFixMe
+const CodeViewer = lazy(() => import('component/viewers/codeViewer'));
 
 type Props = {
   theme: string,
@@ -91,11 +93,13 @@ class DocumentViewer extends React.PureComponent<Props, State> {
     const errorMessage = __("Sorry, looks like we can't load the document.");
 
     return (
-      <div className="file-viewer file-viewer--document">
-        {loading && !error && <div className="placeholder--text-document" />}
-        {error && <LoadingScreen status={errorMessage} spinner={!error} />}
-        {isReady && this.renderDocument()}
-      </div>
+      <Suspense fallback={<div>Loading...</div>}>
+        <div className="file-viewer file-viewer--document">
+          {loading && !error && <div className="placeholder--text-document" />}
+          {error && <LoadingScreen status={errorMessage} spinner={!error} />}
+          {isReady && this.renderDocument()}
+        </div>
+      </Suspense>
     );
   }
 }
