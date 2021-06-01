@@ -1,6 +1,7 @@
 // @flow
 import React, { useEffect, Suspense, lazy } from 'react';
 import { Route, Redirect, Switch, withRouter } from 'react-router-dom';
+import LoadingBar from 'react-top-loading-bar';
 
 import * as PAGES from 'constants/pages';
 import { LINKED_COMMENT_QUERY_PARAM } from 'constants/comment';
@@ -139,6 +140,7 @@ function AppRouter(props: Props) {
   const urlParams = new URLSearchParams(search);
   const resetScroll = urlParams.get('reset_scroll');
   const hasLinkedCommentInUrl = urlParams.get(LINKED_COMMENT_QUERY_PARAM);
+  const loadingBarRef = React.useRef(null);
 
   const dynamicRoutes = Object.values(homepageData).filter(
     (potentialRoute: any) => potentialRoute && potentialRoute.route
@@ -203,6 +205,12 @@ function AppRouter(props: Props) {
     }
   }, [currentScroll, pathname, search, hash, resetScroll, hasLinkedCommentInUrl, historyAction]);
 
+  useEffect(() => {
+    if (loadingBarRef.current) {
+      loadingBarRef.current.continuousStart();
+    }
+  });
+
   // react-router doesn't decode pathanmes before doing the route matching check
   // We have to redirect here because if we redirect on the server, it might get encoded again
   // in the browser causing a redirect loop
@@ -212,7 +220,7 @@ function AppRouter(props: Props) {
   }
 
   return (
-    <Suspense fallback={<div>TODO.....................</div>}>
+    <Suspense fallback={<LoadingBar color="#f11946" ref={loadingBarRef} />}>
       <Switch>
         {/* @if TARGET='app' */}
         {welcomeVersion < WELCOME_VERSION && <Route path="/*" component={Welcome} />}

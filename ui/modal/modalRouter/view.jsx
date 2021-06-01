@@ -2,6 +2,7 @@
 import React, { Suspense, lazy } from 'react';
 import { withRouter } from 'react-router';
 import * as MODALS from 'constants/modal_types';
+import LoadingBar from 'react-top-loading-bar';
 
 const ModalError = lazy(() => import('modal/modalError'));
 const ModalDownloading = lazy(() => import('modal/modalDownloading'));
@@ -52,10 +53,17 @@ type Props = {
 function ModalRouter(props: Props) {
   const { modal, error, location, hideModal } = props;
   const { pathname } = location;
+  const loadingBarRef = React.useRef(null);
 
   React.useEffect(() => {
     hideModal();
   }, [pathname, hideModal]);
+
+  React.useEffect(() => {
+    if (loadingBarRef.current) {
+      loadingBarRef.current.continuousStart();
+    }
+  });
 
   if (error) {
     return <ModalError {...error} />;
@@ -187,7 +195,7 @@ function ModalRouter(props: Props) {
       inner = null;
   }
 
-  return <Suspense fallback={<div>Loading...</div>}>{inner}</Suspense>;
+  return <Suspense fallback={<LoadingBar color="#f11946" ref={loadingBarRef} />}>{inner}</Suspense>;
 }
 
 export default withRouter(ModalRouter);
