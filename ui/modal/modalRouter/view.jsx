@@ -1,45 +1,46 @@
 // @flow
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { withRouter } from 'react-router';
 import * as MODALS from 'constants/modal_types';
-import ModalError from 'modal/modalError';
-import ModalDownloading from 'modal/modalDownloading';
-import ModalAutoGenerateThumbnail from 'modal/modalAutoGenerateThumbnail';
-import ModalAutoUpdateDownloaded from 'modal/modalAutoUpdateDownloaded';
-import ModalUpgrade from 'modal/modalUpgrade';
-import ModalFirstReward from 'modal/modalFirstReward';
-import ModalRemoveFile from 'modal/modalRemoveFile';
-import ModalTransactionFailed from 'modal/modalTransactionFailed';
-import ModalFileTimeout from 'modal/modalFileTimeout';
-import ModalAffirmPurchase from 'modal/modalAffirmPurchase';
-import ModalRevokeClaim from 'modal/modalRevokeClaim';
-import ModalPhoneCollection from 'modal/modalPhoneCollection';
-import ModalFirstSubscription from 'modal/modalFirstSubscription';
-import ModalConfirmTransaction from 'modal/modalConfirmTransaction';
-import ModalSocialShare from 'modal/modalSocialShare';
-import ModalSendTip from 'modal/modalSendTip';
-import ModalPublish from 'modal/modalPublish';
-import ModalPublishPreview from 'modal/modalPublishPreview';
-import ModalOpenExternalResource from 'modal/modalOpenExternalResource';
-import ModalConfirmThumbnailUpload from 'modal/modalConfirmThumbnailUpload';
-import ModalWalletEncrypt from 'modal/modalWalletEncrypt';
-import ModalWalletDecrypt from 'modal/modalWalletDecrypt';
-import ModalWalletUnlock from 'modal/modalWalletUnlock';
-import ModalRewardCode from 'modal/modalRewardCode';
-import ModalPasswordUnsave from 'modal/modalPasswordUnsave';
-import ModalCommentAcknowledgement from 'modal/modalCommentAcknowledgement';
-import ModalYoutubeWelcome from 'modal/modalYoutubeWelcome';
-import ModalSetReferrer from 'modal/modalSetReferrer';
-import ModalSignOut from 'modal/modalSignOut';
-import ModalSupportsLiquidate from 'modal/modalSupportsLiquidate';
-import ModalConfirmAge from 'modal/modalConfirmAge';
-import ModalFileSelection from 'modal/modalFileSelection';
-import ModalSyncEnable from 'modal/modalSyncEnable';
-import ModalImageUpload from 'modal/modalImageUpload';
-import ModalMobileSearch from 'modal/modalMobileSearch';
-import ModalViewImage from 'modal/modalViewImage';
-import ModalMassTipsUnlock from 'modal/modalMassTipUnlock';
-import ModalRemoveBtcSwapAddress from 'modal/modalRemoveBtcSwapAddress';
+
+const ModalError = lazy(() => import('modal/modalError'));
+const ModalDownloading = lazy(() => import('modal/modalDownloading'));
+const ModalAutoGenerateThumbnail = lazy(() => import('modal/modalAutoGenerateThumbnail'));
+const ModalAutoUpdateDownloaded = lazy(() => import('modal/modalAutoUpdateDownloaded'));
+const ModalUpgrade = lazy(() => import('modal/modalUpgrade'));
+const ModalFirstReward = lazy(() => import('modal/modalFirstReward'));
+const ModalRemoveFile = lazy(() => import('modal/modalRemoveFile'));
+const ModalTransactionFailed = lazy(() => import('modal/modalTransactionFailed'));
+const ModalFileTimeout = lazy(() => import('modal/modalFileTimeout'));
+const ModalAffirmPurchase = lazy(() => import('modal/modalAffirmPurchase'));
+const ModalRevokeClaim = lazy(() => import('modal/modalRevokeClaim'));
+const ModalPhoneCollection = lazy(() => import('modal/modalPhoneCollection'));
+const ModalFirstSubscription = lazy(() => import('modal/modalFirstSubscription'));
+const ModalConfirmTransaction = lazy(() => import('modal/modalConfirmTransaction'));
+const ModalSocialShare = lazy(() => import('modal/modalSocialShare'));
+const ModalSendTip = lazy(() => import('modal/modalSendTip'));
+const ModalPublish = lazy(() => import('modal/modalPublish'));
+const ModalPublishPreview = lazy(() => import('modal/modalPublishPreview'));
+const ModalOpenExternalResource = lazy(() => import('modal/modalOpenExternalResource'));
+const ModalConfirmThumbnailUpload = lazy(() => import('modal/modalConfirmThumbnailUpload'));
+const ModalWalletEncrypt = lazy(() => import('modal/modalWalletEncrypt'));
+const ModalWalletDecrypt = lazy(() => import('modal/modalWalletDecrypt'));
+const ModalWalletUnlock = lazy(() => import('modal/modalWalletUnlock'));
+const ModalRewardCode = lazy(() => import('modal/modalRewardCode'));
+const ModalPasswordUnsave = lazy(() => import('modal/modalPasswordUnsave'));
+const ModalCommentAcknowledgement = lazy(() => import('modal/modalCommentAcknowledgement'));
+const ModalYoutubeWelcome = lazy(() => import('modal/modalYoutubeWelcome'));
+const ModalSetReferrer = lazy(() => import('modal/modalSetReferrer'));
+const ModalSignOut = lazy(() => import('modal/modalSignOut'));
+const ModalSupportsLiquidate = lazy(() => import('modal/modalSupportsLiquidate'));
+const ModalConfirmAge = lazy(() => import('modal/modalConfirmAge'));
+const ModalFileSelection = lazy(() => import('modal/modalFileSelection'));
+const ModalSyncEnable = lazy(() => import('modal/modalSyncEnable'));
+const ModalImageUpload = lazy(() => import('modal/modalImageUpload'));
+const ModalMobileSearch = lazy(() => import('modal/modalMobileSearch'));
+const ModalViewImage = lazy(() => import('modal/modalViewImage'));
+const ModalMassTipsUnlock = lazy(() => import('modal/modalMassTipUnlock'));
+const ModalRemoveBtcSwapAddress = lazy(() => import('modal/modalRemoveBtcSwapAddress'));
 
 type Props = {
   modal: { id: string, modalProps: {} },
@@ -65,87 +66,128 @@ function ModalRouter(props: Props) {
   }
 
   const { id, modalProps } = modal;
+  let inner;
 
   switch (id) {
     case MODALS.UPGRADE:
-      return <ModalUpgrade {...modalProps} />;
+      inner = <ModalUpgrade {...modalProps} />;
+      break;
     case MODALS.DOWNLOADING:
-      return <ModalDownloading {...modalProps} />;
+      inner = <ModalDownloading {...modalProps} />;
+      break;
     case MODALS.AUTO_GENERATE_THUMBNAIL:
-      return <ModalAutoGenerateThumbnail {...modalProps} />;
+      inner = <ModalAutoGenerateThumbnail {...modalProps} />;
+      break;
     case MODALS.AUTO_UPDATE_DOWNLOADED:
-      return <ModalAutoUpdateDownloaded {...modalProps} />;
+      inner = <ModalAutoUpdateDownloaded {...modalProps} />;
+      break;
     case MODALS.ERROR:
-      return <ModalError {...modalProps} />;
+      inner = <ModalError {...modalProps} />;
+      break;
     case MODALS.FILE_TIMEOUT:
-      return <ModalFileTimeout {...modalProps} />;
+      inner = <ModalFileTimeout {...modalProps} />;
+      break;
     case MODALS.FIRST_REWARD:
-      return <ModalFirstReward {...modalProps} />;
+      inner = <ModalFirstReward {...modalProps} />;
+      break;
     case MODALS.TRANSACTION_FAILED:
-      return <ModalTransactionFailed {...modalProps} />;
+      inner = <ModalTransactionFailed {...modalProps} />;
+      break;
     case MODALS.CONFIRM_FILE_REMOVE:
-      return <ModalRemoveFile {...modalProps} />;
+      inner = <ModalRemoveFile {...modalProps} />;
+      break;
     case MODALS.AFFIRM_PURCHASE:
-      return <ModalAffirmPurchase {...modalProps} />;
+      inner = <ModalAffirmPurchase {...modalProps} />;
+      break;
     case MODALS.CONFIRM_CLAIM_REVOKE:
-      return <ModalRevokeClaim {...modalProps} />;
+      inner = <ModalRevokeClaim {...modalProps} />;
+      break;
     case MODALS.PHONE_COLLECTION:
-      return <ModalPhoneCollection {...modalProps} />;
+      inner = <ModalPhoneCollection {...modalProps} />;
+      break;
     case MODALS.FIRST_SUBSCRIPTION:
-      return <ModalFirstSubscription {...modalProps} />;
+      inner = <ModalFirstSubscription {...modalProps} />;
+      break;
     case MODALS.SEND_TIP:
-      return <ModalSendTip {...modalProps} />;
+      inner = <ModalSendTip {...modalProps} />;
+      break;
     case MODALS.SOCIAL_SHARE:
-      return <ModalSocialShare {...modalProps} />;
+      inner = <ModalSocialShare {...modalProps} />;
+      break;
     case MODALS.PUBLISH:
-      return <ModalPublish {...modalProps} />;
+      inner = <ModalPublish {...modalProps} />;
+      break;
     case MODALS.PUBLISH_PREVIEW:
-      return <ModalPublishPreview {...modalProps} />;
+      inner = <ModalPublishPreview {...modalProps} />;
+      break;
     case MODALS.CONFIRM_EXTERNAL_RESOURCE:
-      return <ModalOpenExternalResource {...modalProps} />;
+      inner = <ModalOpenExternalResource {...modalProps} />;
+      break;
     case MODALS.CONFIRM_TRANSACTION:
-      return <ModalConfirmTransaction {...modalProps} />;
+      inner = <ModalConfirmTransaction {...modalProps} />;
+      break;
     case MODALS.CONFIRM_THUMBNAIL_UPLOAD:
-      return <ModalConfirmThumbnailUpload {...modalProps} />;
+      inner = <ModalConfirmThumbnailUpload {...modalProps} />;
+      break;
     case MODALS.WALLET_ENCRYPT:
-      return <ModalWalletEncrypt {...modalProps} />;
+      inner = <ModalWalletEncrypt {...modalProps} />;
+      break;
     case MODALS.WALLET_DECRYPT:
-      return <ModalWalletDecrypt {...modalProps} />;
+      inner = <ModalWalletDecrypt {...modalProps} />;
+      break;
     case MODALS.WALLET_UNLOCK:
-      return <ModalWalletUnlock {...modalProps} />;
+      inner = <ModalWalletUnlock {...modalProps} />;
+      break;
     case MODALS.WALLET_PASSWORD_UNSAVE:
-      return <ModalPasswordUnsave {...modalProps} />;
+      inner = <ModalPasswordUnsave {...modalProps} />;
+      break;
     case MODALS.REWARD_GENERATED_CODE:
-      return <ModalRewardCode {...modalProps} />;
+      inner = <ModalRewardCode {...modalProps} />;
+      break;
     case MODALS.COMMENT_ACKNOWEDGEMENT:
-      return <ModalCommentAcknowledgement {...modalProps} />;
+      inner = <ModalCommentAcknowledgement {...modalProps} />;
+      break;
     case MODALS.YOUTUBE_WELCOME:
-      return <ModalYoutubeWelcome />;
+      inner = <ModalYoutubeWelcome />;
+      break;
     case MODALS.SET_REFERRER:
-      return <ModalSetReferrer {...modalProps} />;
+      inner = <ModalSetReferrer {...modalProps} />;
+      break;
     case MODALS.SIGN_OUT:
-      return <ModalSignOut {...modalProps} />;
+      inner = <ModalSignOut {...modalProps} />;
+      break;
     case MODALS.CONFIRM_AGE:
-      return <ModalConfirmAge {...modalProps} />;
+      inner = <ModalConfirmAge {...modalProps} />;
+      break;
     case MODALS.FILE_SELECTION:
-      return <ModalFileSelection {...modalProps} />;
+      inner = <ModalFileSelection {...modalProps} />;
+      break;
     case MODALS.LIQUIDATE_SUPPORTS:
-      return <ModalSupportsLiquidate {...modalProps} />;
+      inner = <ModalSupportsLiquidate {...modalProps} />;
+      break;
     case MODALS.IMAGE_UPLOAD:
-      return <ModalImageUpload {...modalProps} />;
+      inner = <ModalImageUpload {...modalProps} />;
+      break;
     case MODALS.SYNC_ENABLE:
-      return <ModalSyncEnable {...modalProps} />;
+      inner = <ModalSyncEnable {...modalProps} />;
+      break;
     case MODALS.MOBILE_SEARCH:
-      return <ModalMobileSearch {...modalProps} />;
+      inner = <ModalMobileSearch {...modalProps} />;
+      break;
     case MODALS.VIEW_IMAGE:
-      return <ModalViewImage {...modalProps} />;
+      inner = <ModalViewImage {...modalProps} />;
+      break;
     case MODALS.MASS_TIP_UNLOCK:
-      return <ModalMassTipsUnlock {...modalProps} />;
+      inner = <ModalMassTipsUnlock {...modalProps} />;
+      break;
     case MODALS.CONFIRM_REMOVE_BTC_SWAP_ADDRESS:
-      return <ModalRemoveBtcSwapAddress {...modalProps} />;
+      inner = <ModalRemoveBtcSwapAddress {...modalProps} />;
+      break;
     default:
-      return null;
+      inner = null;
   }
+
+  return <Suspense fallback={<div>Loading...</div>}>{inner}</Suspense>;
 }
 
 export default withRouter(ModalRouter);
