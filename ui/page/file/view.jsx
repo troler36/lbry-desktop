@@ -7,10 +7,11 @@ import FileTitleSection from 'component/fileTitleSection';
 import FileRenderInitiator from 'component/fileRenderInitiator';
 import FileRenderInline from 'component/fileRenderInline';
 import FileRenderDownload from 'component/fileRenderDownload';
-import RecommendedContent from 'component/recommendedContent';
 import CommentsList from 'component/commentsList';
 import PostViewer from 'component/postViewer';
 import Empty from 'component/common/empty';
+
+const RecommendedContent = React.lazy(() => import('component/recommendedContent' /* webpackChunkName: "list" */));
 
 export const PRIMARY_PLAYER_WRAPPER_CLASS = 'file-page__video-container';
 
@@ -123,27 +124,29 @@ function FilePage(props: Props) {
 
   return (
     <Page className="file-page" filePage isMarkdown={isMarkdown}>
-      <div className={classnames('section card-stack', `file-page__${renderMode}`)}>
-        {renderFilePageLayout()}
+      <React.Suspense fallback={null}>
+        <div className={classnames('section card-stack', `file-page__${renderMode}`)}>
+          {renderFilePageLayout()}
 
-        {!isMarkdown && (
-          <div className="file-page__secondary-content">
-            <div>
-              {RENDER_MODES.FLOATING_MODES.includes(renderMode) && <FileTitleSection uri={uri} />}
-              {commentsDisabled && <Empty text={__('The creator of this content has disabled comments.')} />}
-              {!commentsDisabled && <CommentsList uri={uri} linkedComment={linkedComment} />}
+          {!isMarkdown && (
+            <div className="file-page__secondary-content">
+              <div>
+                {RENDER_MODES.FLOATING_MODES.includes(renderMode) && <FileTitleSection uri={uri} />}
+                {commentsDisabled && <Empty text={__('The creator of this content has disabled comments.')} />}
+                {!commentsDisabled && <CommentsList uri={uri} linkedComment={linkedComment} />}
+              </div>
+              {videoTheaterMode && <RecommendedContent uri={uri} />}
             </div>
-            {videoTheaterMode && <RecommendedContent uri={uri} />}
+          )}
+        </div>
+
+        {!isMarkdown && !videoTheaterMode && <RecommendedContent uri={uri} />}
+        {isMarkdown && (
+          <div className="file-page__post-comments">
+            <CommentsList uri={uri} linkedComment={linkedComment} />
           </div>
         )}
-      </div>
-
-      {!isMarkdown && !videoTheaterMode && <RecommendedContent uri={uri} />}
-      {isMarkdown && (
-        <div className="file-page__post-comments">
-          <CommentsList uri={uri} linkedComment={linkedComment} />
-        </div>
-      )}
+      </React.Suspense>
     </Page>
   );
 }
