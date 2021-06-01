@@ -3,15 +3,15 @@ import * as React from 'react';
 import classnames from 'classnames';
 import Page from 'component/page';
 import * as RENDER_MODES from 'constants/file_render_modes';
-import FileTitleSection from 'component/fileTitleSection';
-import FileRenderInitiator from 'component/fileRenderInitiator';
-import FileRenderInline from 'component/fileRenderInline';
-import FileRenderDownload from 'component/fileRenderDownload';
-import CommentsList from 'component/commentsList';
-import PostViewer from 'component/postViewer';
-import Empty from 'component/common/empty';
 
-const RecommendedContent = React.lazy(() => import('component/recommendedContent' /* webpackChunkName: "list" */));
+const CommentsList = React.lazy(() => import('component/commentsList'));
+const Empty = React.lazy(() => import('component/common/empty'));
+const FileTitleSection = React.lazy(() => import('component/fileTitleSection'));
+const FileRenderDownload = React.lazy(() => import('component/fileRenderDownload'));
+const FileRenderInline = React.lazy(() => import('component/fileRenderInline'));
+const FileRenderInitiator = React.lazy(() => import('component/fileRenderInitiator'));
+const PostViewer = React.lazy(() => import('component/postViewer'));
+const RecommendedContent = React.lazy(() => import('component/recommendedContent'));
 
 export const PRIMARY_PLAYER_WRAPPER_CLASS = 'file-page__video-container';
 
@@ -73,51 +73,57 @@ function FilePage(props: Props) {
   function renderFilePageLayout() {
     if (RENDER_MODES.FLOATING_MODES.includes(renderMode)) {
       return (
-        <React.Fragment>
+        <React.Suspense fallback={null}>
           <div className={PRIMARY_PLAYER_WRAPPER_CLASS}>
             <FileRenderInitiator uri={uri} videoTheaterMode={videoTheaterMode} />
           </div>
           {/* playables will be rendered and injected by <FileRenderFloating> */}
-        </React.Fragment>
+        </React.Suspense>
       );
     }
 
     if (RENDER_MODES.UNRENDERABLE_MODES.includes(renderMode)) {
       return (
-        <React.Fragment>
+        <React.Suspense fallback={null}>
           <FileTitleSection uri={uri} />
           <FileRenderDownload uri={uri} isFree={cost === 0} />
-        </React.Fragment>
+        </React.Suspense>
       );
     }
 
     if (isMarkdown) {
-      return <PostViewer uri={uri} />;
+      return (
+        <React.Suspense fallback={null}>
+          <PostViewer uri={uri} />;
+        </React.Suspense>
+      );
     }
 
     if (RENDER_MODES.TEXT_MODES.includes(renderMode)) {
       return (
-        <React.Fragment>
+        <React.Suspense fallback={null}>
           <FileTitleSection uri={uri} />
           <FileRenderInitiator uri={uri} />
           <FileRenderInline uri={uri} />
-        </React.Fragment>
+        </React.Suspense>
       );
     }
 
     return (
-      <React.Fragment>
+      <React.Suspense fallback={null}>
         <FileRenderInitiator uri={uri} videoTheaterMode={videoTheaterMode} />
         <FileRenderInline uri={uri} />
         <FileTitleSection uri={uri} />
-      </React.Fragment>
+      </React.Suspense>
     );
   }
 
   if (obscureNsfw && isMature) {
     return (
       <Page>
-        <FileTitleSection uri={uri} isNsfwBlocked />
+        <React.Suspense fallback={null}>
+          <FileTitleSection uri={uri} isNsfwBlocked />
+        </React.Suspense>
       </Page>
     );
   }
