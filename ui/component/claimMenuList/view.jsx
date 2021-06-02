@@ -20,9 +20,13 @@ type Props = {
   claimIsMine: boolean,
   channelIsMuted: boolean,
   channelIsBlocked: boolean,
+  channelIsAdminBlocked: boolean,
+  isAdmin: boolean,
   doToggleMuteChannel: (string) => void,
   doCommentModBlock: (string) => void,
   doCommentModUnBlock: (string) => void,
+  doCommentModBlockAsAdmin: (string, string) => void,
+  doCommentModUnBlockAsAdmin: (string, string) => void,
   channelIsMine: boolean,
   isRepost: boolean,
   doCollectionEdit: (string, any) => void,
@@ -45,8 +49,12 @@ function ClaimMenuList(props: Props) {
     doToggleMuteChannel,
     channelIsMuted,
     channelIsBlocked,
+    channelIsAdminBlocked,
+    isAdmin,
     doCommentModBlock,
     doCommentModUnBlock,
+    doCommentModBlockAsAdmin,
+    doCommentModUnBlockAsAdmin,
     doCollectionEdit,
     hasClaimInWatchLater,
     doOpenModal,
@@ -87,6 +95,14 @@ function ClaimMenuList(props: Props) {
       doCommentModUnBlock(channelUri);
     } else {
       doCommentModBlock(channelUri);
+    }
+  }
+
+  function handleToggleAdminBlock() {
+    if (channelIsAdminBlocked) {
+      doCommentModUnBlockAsAdmin(channelUri, '');
+    } else {
+      doCommentModBlockAsAdmin(channelUri, '');
     }
   }
 
@@ -180,6 +196,15 @@ function ClaimMenuList(props: Props) {
                 {channelIsBlocked ? __('Unblock Channel') : __('Block Channel')}
               </div>
             </MenuItem>
+
+            {isAdmin && (
+              <MenuItem className="comment__menu-option" onSelect={handleToggleAdminBlock}>
+                <div className="menu__link">
+                  <Icon aria-hidden icon={ICONS.GLOBE} />
+                  {channelIsAdminBlocked ? __('Global Unblock Channel') : __('Global Block Channel')}
+                </div>
+              </MenuItem>
+            )}
 
             <MenuItem className="comment__menu-option" onSelect={handleToggleMute}>
               <div className="menu__link">

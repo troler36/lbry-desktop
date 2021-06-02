@@ -10,8 +10,17 @@ import {
 } from 'lbry-redux';
 import { makeSelectChannelIsMuted } from 'redux/selectors/blocked';
 import { doToggleMuteChannel } from 'redux/actions/blocked';
-import { doCommentModBlock, doCommentModUnBlock } from 'redux/actions/comments';
-import { makeSelectChannelIsBlocked } from 'redux/selectors/comments';
+import {
+  doCommentModBlock,
+  doCommentModUnBlock,
+  doCommentModBlockAsAdmin,
+  doCommentModUnBlockAsAdmin,
+} from 'redux/actions/comments';
+import {
+  selectHasAdminChannel,
+  makeSelectChannelIsBlocked,
+  makeSelectChannelIsAdminBlocked,
+} from 'redux/selectors/comments';
 import { doOpenModal } from 'redux/actions/app';
 import { doToast } from 'redux/actions/notifications';
 import { makeSelectUserPropForProp } from 'redux/selectors/user';
@@ -31,6 +40,8 @@ const select = (state, props) => {
     hasClaimInWatchLater: makeSelectCollectionForIdHasClaimUrl(COLLECTIONS_CONSTS.WATCH_LATER_ID, permanentUri)(state),
     channelIsMuted: makeSelectChannelIsMuted(props.uri)(state),
     channelIsBlocked: makeSelectChannelIsBlocked(props.uri)(state),
+    channelIsAdminBlocked: makeSelectChannelIsAdminBlocked(props.uri)(state),
+    isAdmin: selectHasAdminChannel(state),
     claimInCollection: makeSelectCollectionForIdHasClaimUrl(props.collectionId, permanentUri)(state),
     collectionName: makeSelectNameForCollectionId(props.collectionId)(state),
     isMyCollection: makeSelectCollectionIsMine(props.collectionId)(state),
@@ -42,6 +53,8 @@ export default connect(select, {
   doToggleMuteChannel,
   doCommentModBlock,
   doCommentModUnBlock,
+  doCommentModBlockAsAdmin,
+  doCommentModUnBlockAsAdmin,
   doCollectionEdit,
   doOpenModal,
   doToast,

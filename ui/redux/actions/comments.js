@@ -664,7 +664,7 @@ function doCommentModToggleBlock(
             });
 
             if (!unblock) {
-              dispatch(doToast({ message: __('Channel blocked. You will not see them again.') }));
+              dispatch(doToast({ message: __('Channel "%channel%" blocked.', { channel: commenterNameForAction }) }));
             }
           })
           .catch(() => {
