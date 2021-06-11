@@ -125,6 +125,15 @@ function HomePage(props: Props) {
           </p>
         </div>
       )}
+
+
+
+      <h1 className="home__meme">
+        <Button button="link" href="https://odysee.com/@Odysee:8?view=discussion">
+          {__("this is my favorite store on the citadel")}
+        </Button>
+      </h1>
+
       {rowData.map(({ title, route, link, icon, help, options = {} }, index) => {
         return getRowElements(title, route, link, icon, help, options, index);
       })}
