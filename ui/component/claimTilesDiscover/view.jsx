@@ -145,14 +145,14 @@ function ClaimTilesDiscover(props: Props) {
     mutedUris,
     liveLivestreamsFirst,
     livestreamMap,
-    // pin, // let's pin from /web folder
+    pin,
     prefixUris,
   } = props;
 
   const { location } = useHistory();
   const urlParams = new URLSearchParams(location.search);
   const feeAmountInUrl = urlParams.get('fee_amount');
-  const feeAmountParam = feeAmountInUrl || feeAmount;
+  const feeAmountParam = feeAmountInUrl || feeAmount || CS.FEE_AMOUNT_ONLY_FREE;
   const mutedAndBlockedChannelIds = Array.from(new Set(mutedUris.concat(blockedUris).map((uri) => uri.split('#')[1])));
   const liveUris = [];
 
@@ -284,10 +284,26 @@ function ClaimTilesDiscover(props: Props) {
     return undefined;
   };
 
+  const modifiedUris = uris ? uris.slice() : [];
+  const fixUris = [
+    'lbry://@Odysee#8/social-media-pre-bans#d',
+                  ];
+
+  if (pin && modifiedUris && modifiedUris.length > 2 && window.location.pathname === '/') {
+    fixUris.forEach((fixUri) => {
+      if (modifiedUris.indexOf(fixUri) !== -1) {
+        modifiedUris.splice(modifiedUris.indexOf(fixUri), 1);
+      } else {
+        modifiedUris.pop();
+      }
+    });
+    modifiedUris.splice(2, 0, ...fixUris);
+  }
+
   return (
     <ul className="claim-grid">
-      {uris && uris.length
-        ? uris.map((uri, index) => (
+      {modifiedUris && modifiedUris.length
+        ? modifiedUris.map((uri, index) => (
             <ClaimPreviewTile key={uri} uri={uri} properties={renderProperties} live={resolveLive(index)} />
           ))
         : new Array(pageSize).fill(1).map((x, i) => <ClaimPreviewTile key={i} placeholder />)}
