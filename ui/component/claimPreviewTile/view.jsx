@@ -208,7 +208,7 @@ function ClaimPreviewTile(props: Props) {
               )}
               {/* @endif */}
 
-              {isPlayable && (
+              {claim && isPlayable && (
                 <div className="claim-preview__hover-actions">
                   <Button
                     title={hasClaimInWatchLater ? __('Remove from Watch Later') : __('Add to Watch Later')}

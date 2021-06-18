@@ -325,7 +325,7 @@ const ClaimPreview = forwardRef<any, {}>((props: Props, ref: any) => {
                         <PreviewOverlayProperties uri={uri} small={type === 'small'} properties={liveProperty} />
                       </div>
                     )}
-                    {isPlayable && (
+                    {claim && isPlayable && (
                       <div className="claim-preview__hover-actions">
                         <Button
                           title={hasClaimInWatchLater ? __('Remove from Watch Later') : __('Add to Watch Later')}
