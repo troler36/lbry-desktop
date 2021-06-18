@@ -79,6 +79,8 @@ type Props = {
   collectionUris: Array<Collection>,
   collectionIndex?: number,
   disableNavigation?: boolean,
+  hasClaimInWatchLater: boolean,
+  doToast: ({ message: string }) => void,
 };
 
 const ClaimPreview = forwardRef<any, {}>((props: Props, ref: any) => {
@@ -136,6 +138,8 @@ const ClaimPreview = forwardRef<any, {}>((props: Props, ref: any) => {
     isCollectionMine,
     collectionUris,
     disableNavigation,
+    hasClaimInWatchLater,
+    doToast,
   } = props;
   const isRepost = claim && claim.repost_channel_url;
   const WrapperElement = wrapperElement || 'li';
@@ -155,6 +159,15 @@ const ClaimPreview = forwardRef<any, {}>((props: Props, ref: any) => {
       isValid = false;
     }
   }
+  // $FlowFixMe
+  const isPlayable =
+    claim &&
+    // $FlowFixMe
+    claim.value &&
+    // $FlowFixMe
+    claim.value.stream_type &&
+    // $FlowFixMe
+    (claim.value.stream_type === 'audio' || claim.value.stream_type === 'video');
   const isCollection = claim && claim.value_type === 'collection';
   const isChannelUri = isValid ? parseURI(uri).isChannel : false;
   const signingChannel = claim && claim.signing_channel;
@@ -310,6 +323,30 @@ const ClaimPreview = forwardRef<any, {}>((props: Props, ref: any) => {
                     {!isLivestream && (
                       <div className="claim-preview__file-property-overlay">
                         <PreviewOverlayProperties uri={uri} small={type === 'small'} properties={liveProperty} />
+                      </div>
+                    )}
+                    {isPlayable && (
+                      <div className="claim-preview__hover-actions">
+                        <Button
+                          title={hasClaimInWatchLater ? __('Remove from Watch Later') : __('Add to Watch Later')}
+                          className="button--file-action"
+                          icon={hasClaimInWatchLater ? ICONS.DELETE : ICONS.TIME}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            doToast({
+                              message: __('Item %action% Watch Later', {
+                                action: hasClaimInWatchLater ? __('removed from') : __('added to'),
+                              }),
+                              linkText: !hasClaimInWatchLater && __('See All'),
+                              linkTarget: !hasClaimInWatchLater && '/list/watchlater',
+                            });
+                            editCollection(COLLECTIONS_CONSTS.WATCH_LATER_ID, {
+                              claims: [claim],
+                              remove: hasClaimInWatchLater,
+                              type: 'playlist',
+                            });
+                          }}
+                        />
                       </div>
                     )}
                   </FileThumbnail>

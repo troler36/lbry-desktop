@@ -16,6 +16,8 @@ import FileDownloadLink from 'component/fileDownloadLink';
 import ClaimRepostAuthor from 'component/claimRepostAuthor';
 import ClaimMenuList from 'component/claimMenuList';
 import CollectionPreviewOverlay from 'component/collectionPreviewOverlay';
+import Button from 'component/button';
+import * as ICONS from 'constants/icons';
 
 type Props = {
   uri: string,
@@ -44,6 +46,9 @@ type Props = {
   properties?: (Claim) => void,
   live?: boolean,
   collectionId?: string,
+  hasClaimInWatchLater: boolean,
+  doToast: ({ message: string }) => void,
+  doCollectionEdit: (string, any) => void,
 };
 
 function ClaimPreviewTile(props: Props) {
@@ -67,10 +72,22 @@ function ClaimPreviewTile(props: Props) {
     properties,
     live,
     collectionId,
+    hasClaimInWatchLater,
+    doToast,
+    doCollectionEdit,
   } = props;
   const isRepost = claim && claim.repost_channel_url;
   const isCollection = claim && claim.value_type === 'collection';
   const isStream = claim && claim.value_type === 'stream';
+  // $FlowFixMe
+  const isPlayable =
+    claim &&
+    // $FlowFixMe
+    claim.value &&
+    // $FlowFixMe
+    claim.value.stream_type &&
+    // $FlowFixMe
+    (claim.value.stream_type === 'audio' || claim.value.stream_type === 'video');
   const collectionClaimId = isCollection && claim && claim.claim_id;
   const shouldFetch = claim === undefined;
   const thumbnailUrl = useGetThumbnail(uri, claim, streamingUrl, getFile, placeholder) || thumbnail;
@@ -190,6 +207,31 @@ function ClaimPreviewTile(props: Props) {
                 </div>
               )}
               {/* @endif */}
+
+              {isPlayable && (
+                <div className="claim-preview__hover-actions">
+                  <Button
+                    title={hasClaimInWatchLater ? __('Remove from Watch Later') : __('Add to Watch Later')}
+                    className="button--file-action"
+                    icon={hasClaimInWatchLater ? ICONS.DELETE : ICONS.TIME}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      doToast({
+                        message: __('Item %action% Watch Later', {
+                          action: hasClaimInWatchLater ? __('removed from') : __('added to'),
+                        }),
+                        linkText: !hasClaimInWatchLater && __('See All'),
+                        linkTarget: !hasClaimInWatchLater && '/list/watchlater',
+                      });
+                      doCollectionEdit(COLLECTIONS_CONSTS.WATCH_LATER_ID, {
+                        claims: [claim],
+                        remove: hasClaimInWatchLater,
+                        type: 'playlist',
+                      });
+                    }}
+                  />
+                </div>
+              )}
 
               <div className="claim-preview__file-property-overlay">
                 <PreviewOverlayProperties uri={uri} properties={liveProperty || properties} />
