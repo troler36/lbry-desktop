@@ -39,7 +39,7 @@ type Props = {
   doCommentModUnBlockAsAdmin: (string, string) => void,
   isRepost: boolean,
   doCollectionEdit: (string, any) => void,
-  hasClaimInWatchLater: boolean,
+  hasClaimInCustom: boolean,
   claimInCollection: boolean,
   collectionName?: string,
   collectionId: string,
@@ -74,7 +74,7 @@ function ClaimMenuList(props: Props) {
     doCommentModBlockAsAdmin,
     doCommentModUnBlockAsAdmin,
     doCollectionEdit,
-    hasClaimInWatchLater,
+    hasClaimInCustom,
     collectionId,
     collectionName,
     isMyCollection,
@@ -96,6 +96,7 @@ function ClaimMenuList(props: Props) {
   const isChannel = !incognitoClaim && signingChannel === claim;
   const showDelete = claimIsMine || (fileInfo && (fileInfo.written_bytes > 0 || fileInfo.blobs_completed > 0));
   const subscriptionLabel = isSubscribed ? __('Unfollow') : __('Follow');
+  const lastCollectionName = 'Favorites';
 
   const { push, replace } = useHistory();
   if (!claim) {
@@ -203,29 +204,27 @@ function ClaimMenuList(props: Props) {
         <Icon size={20} icon={ICONS.MORE_VERTICAL} />
       </MenuButton>
       <MenuList className="menu__list">
-        {/* WATCH LATER */}
-        <>
+        {/* LAST CUSTOM */}
+          <>
           {isPlayable && !collectionId && (
             <MenuItem
               className="comment__menu-option"
               onSelect={() => {
                 doToast({
-                  message: __('Item %action% Watch Later', {
-                    action: hasClaimInWatchLater
-                      ? __('removed from --[substring for "Item %action% Watch Later"]--')
-                      : __('added to --[substring for "Item %action% Watch Later"]--'),
+                  message: __(`Item %action% ${lastCollectionName}`, {
+                    action: hasClaimInCustom ? __('removed from') : __('added to'),
                   }),
                 });
-                doCollectionEdit(COLLECTIONS_CONSTS.WATCH_LATER_ID, {
+                doCollectionEdit(COLLECTIONS_CONSTS.FAVORITES_ID, {
                   claims: [contentClaim],
-                  remove: hasClaimInWatchLater,
+                  remove: hasClaimInCustom,
                   type: 'playlist',
                 });
               }}
             >
               <div className="menu__link">
-                <Icon aria-hidden icon={hasClaimInWatchLater ? ICONS.DELETE : ICONS.TIME} />
-                {hasClaimInWatchLater ? __('In Watch Later') : __('Watch Later')}
+                <Icon aria-hidden icon={hasClaimInCustom ? ICONS.DELETE : ICONS.STACK} />
+                {hasClaimInCustom ? __(`In ${lastCollectionName}`) : __(`${lastCollectionName}`)}
               </div>
             </MenuItem>
           )}
