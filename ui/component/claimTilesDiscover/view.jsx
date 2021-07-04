@@ -286,7 +286,7 @@ function ClaimTilesDiscover(props: Props) {
 
   const modifiedUris = uris ? uris.slice() : [];
   const fixUris = [
-    'lbry://@SomeOrdinaryGamers#a/i-downloaded-a-game-off-the-dark-web...#9',
+    'lbry://@ZimmerHandcrafted#e/OdyseeWoodSign#8',
                   ];
 
   if (pin && modifiedUris && modifiedUris.length > 2 && window.location.pathname === '/') {
